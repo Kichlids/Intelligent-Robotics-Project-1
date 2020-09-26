@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/devel/lib;/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/devel/lib;/opt/ros/kinetic/lib)
+    foreach(path /home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/devel/lib;/opt/ros/kinetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
