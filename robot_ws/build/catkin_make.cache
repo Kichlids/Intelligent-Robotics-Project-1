@@ -1,0 +1,2 @@
+
+-DCATKIN_DEVEL_PREFIX=/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/devel -DCMAKE_INSTALL_PREFIX=/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/install -G Unix Makefiles
