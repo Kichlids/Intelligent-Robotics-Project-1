@@ -5,6 +5,7 @@ import sys, select, termios, tty
 
 import random
 import math
+import time
 
 from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
@@ -12,7 +13,7 @@ from sensor_msgs.msg import LaserScan
 
 # Constants
 LINEAR_SPEED_DEFAULT = 0.2
-ANGULAR_SPEED_DEFAULT = 100
+ANGULAR_SPEED_DEFAULT = 0.2
 
 # Use WASD to move
 input_keys = ['w', 'a', 's', 'd']
@@ -22,7 +23,6 @@ input_keys = ['w', 'a', 's', 'd']
 _velocity_pub = None
 _collision_detected = False
 _is_teleop_controlled = False
-
 
 
 # Gets keyboard input from user
@@ -73,6 +73,7 @@ def bumper_callback(data):
     global _is_teleop_controlled
 
     if data.state == BumperEvent.PRESSED:
+        print('COLLISION DETECTED\n')
         _collision_detected = True
         _is_teleop_controlled = False
 
@@ -81,7 +82,7 @@ def move_autonomously(target_distance):
     global _velocity_pub
 
     # Forward movement
-    '''
+    
     move_msg = Twist()
     move_msg.linear.x = LINEAR_SPEED_DEFAULT
 
@@ -98,18 +99,26 @@ def move_autonomously(target_distance):
     
     move_msg.linear.x = 0
     _velocity_pub.publish(move_msg)
-    '''
+    print('forward done')
+    #time.sleep(1)
+    
 
     # Rotation movement
 
-    turn_msg = Twist()
-    turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
-
     t0 = rospy.Time.now().to_sec()
     current_angle = 0
-    target_angle = get_random_number(-15.0, 15.0)
+    rand = get_random_number(-15.0, 15.0)
+    target_angle = rand
+    print(rand)
 
-    while (current_angle < target_angle):
+    turn_msg = Twist()
+    if rand >= 0:
+        turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
+    else:
+        turn_msg.angular.z = -ANGULAR_SPEED_DEFAULT
+
+
+    while (current_angle < abs(target_angle)):
         if (_is_teleop_controlled):
             return
         
@@ -119,18 +128,17 @@ def move_autonomously(target_distance):
     
     turn_msg.angular.z = 0
     _velocity_pub.publish(turn_msg)
+    print('turn done')
 
 
 def meters_to_feet(val):
-    return val * 3.28
+    return val / 3.28
 
 def get_random_number(min, max):
-    rand = random.randint(min, max)
-    print(rand)
+    rand = random.uniform(min, max)
     return rand
 
 def rad_to_deg(rad):
-    print
     return rad * 180 / math.pi
 
 
@@ -160,8 +168,6 @@ def init_control_node():
         
         else:
             move_autonomously(meters_to_feet(1))
-        
-        
         
         rate.sleep()
 
