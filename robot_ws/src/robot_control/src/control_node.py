@@ -8,6 +8,7 @@ import math
 import numpy
 
 from robot_msgs.msg import keyboard
+
 from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
 from sensor_msgs.msg import LaserScan
