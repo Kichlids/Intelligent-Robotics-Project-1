@@ -119,7 +119,6 @@ def move_autonomously():
     global _velocity_pub
 
     # Forward movement
-    
     move_msg = Twist()
     move_msg.linear.x = LINEAR_SPEED_DEFAULT
 
@@ -135,11 +134,8 @@ def move_autonomously():
         current_distance = LINEAR_SPEED_DEFAULT * (t1 - t0)
     )
     print('forward done')
-    #time.sleep(1)
-    
 
     # Rotation movement
-
     t0 = rospy.Time.now().to_sec()
     current_angle = 0
     target_angle = get_random_number(-15.0, 15.0)

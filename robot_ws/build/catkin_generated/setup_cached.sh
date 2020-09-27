@@ -8,3 +8,4 @@
 
 # modified environment variables
 export PWD="/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build"
+export PYTHONPATH="/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/devel/lib/python2.7/dist-packages:$PYTHONPATH"

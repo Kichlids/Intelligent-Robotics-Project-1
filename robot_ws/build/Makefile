@@ -347,6 +347,305 @@ std_msgs_generate_messages_cpp/fast:
 	$(MAKE) -f robot_control/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make robot_control/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
 .PHONY : std_msgs_generate_messages_cpp/fast
 
+#=============================================================================
+# Target rules for targets named robot_msgs_genpy
+
+# Build rule for target.
+robot_msgs_genpy: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_genpy
+.PHONY : robot_msgs_genpy
+
+# fast build rule for target.
+robot_msgs_genpy/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_genpy.dir/build.make robot_msgs/CMakeFiles/robot_msgs_genpy.dir/build
+.PHONY : robot_msgs_genpy/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_generate_messages_cpp
+
+# Build rule for target.
+robot_msgs_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_generate_messages_cpp
+.PHONY : robot_msgs_generate_messages_cpp
+
+# fast build rule for target.
+robot_msgs_generate_messages_cpp/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_generate_messages_cpp.dir/build.make robot_msgs/CMakeFiles/robot_msgs_generate_messages_cpp.dir/build
+.PHONY : robot_msgs_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named _robot_msgs_generate_messages_check_deps_keyboard
+
+# Build rule for target.
+_robot_msgs_generate_messages_check_deps_keyboard: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 _robot_msgs_generate_messages_check_deps_keyboard
+.PHONY : _robot_msgs_generate_messages_check_deps_keyboard
+
+# fast build rule for target.
+_robot_msgs_generate_messages_check_deps_keyboard/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/_robot_msgs_generate_messages_check_deps_keyboard.dir/build.make robot_msgs/CMakeFiles/_robot_msgs_generate_messages_check_deps_keyboard.dir/build
+.PHONY : _robot_msgs_generate_messages_check_deps_keyboard/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_generate_messages_lisp
+
+# Build rule for target.
+robot_msgs_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_generate_messages_lisp
+.PHONY : robot_msgs_generate_messages_lisp
+
+# fast build rule for target.
+robot_msgs_generate_messages_lisp/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_generate_messages_lisp.dir/build.make robot_msgs/CMakeFiles/robot_msgs_generate_messages_lisp.dir/build
+.PHONY : robot_msgs_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_gencpp
+
+# Build rule for target.
+robot_msgs_gencpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_gencpp
+.PHONY : robot_msgs_gencpp
+
+# fast build rule for target.
+robot_msgs_gencpp/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_gencpp.dir/build.make robot_msgs/CMakeFiles/robot_msgs_gencpp.dir/build
+.PHONY : robot_msgs_gencpp/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_generate_messages
+
+# Build rule for target.
+robot_msgs_generate_messages: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_generate_messages
+.PHONY : robot_msgs_generate_messages
+
+# fast build rule for target.
+robot_msgs_generate_messages/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_generate_messages.dir/build.make robot_msgs/CMakeFiles/robot_msgs_generate_messages.dir/build
+.PHONY : robot_msgs_generate_messages/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_genlisp
+
+# Build rule for target.
+robot_msgs_genlisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_genlisp
+.PHONY : robot_msgs_genlisp
+
+# fast build rule for target.
+robot_msgs_genlisp/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_genlisp.dir/build.make robot_msgs/CMakeFiles/robot_msgs_genlisp.dir/build
+.PHONY : robot_msgs_genlisp/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_generate_messages_eus
+
+# Build rule for target.
+robot_msgs_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_generate_messages_eus
+.PHONY : robot_msgs_generate_messages_eus
+
+# fast build rule for target.
+robot_msgs_generate_messages_eus/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_generate_messages_eus.dir/build.make robot_msgs/CMakeFiles/robot_msgs_generate_messages_eus.dir/build
+.PHONY : robot_msgs_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_geneus
+
+# Build rule for target.
+robot_msgs_geneus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_geneus
+.PHONY : robot_msgs_geneus
+
+# fast build rule for target.
+robot_msgs_geneus/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_geneus.dir/build.make robot_msgs/CMakeFiles/robot_msgs_geneus.dir/build
+.PHONY : robot_msgs_geneus/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_generate_messages_nodejs
+
+# Build rule for target.
+robot_msgs_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_generate_messages_nodejs
+.PHONY : robot_msgs_generate_messages_nodejs
+
+# fast build rule for target.
+robot_msgs_generate_messages_nodejs/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_generate_messages_nodejs.dir/build.make robot_msgs/CMakeFiles/robot_msgs_generate_messages_nodejs.dir/build
+.PHONY : robot_msgs_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_generate_messages_py
+
+# Build rule for target.
+robot_msgs_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_generate_messages_py
+.PHONY : robot_msgs_generate_messages_py
+
+# fast build rule for target.
+robot_msgs_generate_messages_py/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_generate_messages_py.dir/build.make robot_msgs/CMakeFiles/robot_msgs_generate_messages_py.dir/build
+.PHONY : robot_msgs_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named robot_msgs_gennodejs
+
+# Build rule for target.
+robot_msgs_gennodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_msgs_gennodejs
+.PHONY : robot_msgs_gennodejs
+
+# fast build rule for target.
+robot_msgs_gennodejs/fast:
+	$(MAKE) -f robot_msgs/CMakeFiles/robot_msgs_gennodejs.dir/build.make robot_msgs/CMakeFiles/robot_msgs_gennodejs.dir/build
+.PHONY : robot_msgs_gennodejs/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_genpy
+
+# Build rule for target.
+robot_teleop_genpy: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_genpy
+.PHONY : robot_teleop_genpy
+
+# fast build rule for target.
+robot_teleop_genpy/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_genpy.dir/build.make robot_teleop/CMakeFiles/robot_teleop_genpy.dir/build
+.PHONY : robot_teleop_genpy/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_generate_messages_eus
+
+# Build rule for target.
+robot_teleop_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_generate_messages_eus
+.PHONY : robot_teleop_generate_messages_eus
+
+# fast build rule for target.
+robot_teleop_generate_messages_eus/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_generate_messages_eus.dir/build.make robot_teleop/CMakeFiles/robot_teleop_generate_messages_eus.dir/build
+.PHONY : robot_teleop_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_gencpp
+
+# Build rule for target.
+robot_teleop_gencpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_gencpp
+.PHONY : robot_teleop_gencpp
+
+# fast build rule for target.
+robot_teleop_gencpp/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_gencpp.dir/build.make robot_teleop/CMakeFiles/robot_teleop_gencpp.dir/build
+.PHONY : robot_teleop_gencpp/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_gennodejs
+
+# Build rule for target.
+robot_teleop_gennodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_gennodejs
+.PHONY : robot_teleop_gennodejs
+
+# fast build rule for target.
+robot_teleop_gennodejs/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_gennodejs.dir/build.make robot_teleop/CMakeFiles/robot_teleop_gennodejs.dir/build
+.PHONY : robot_teleop_gennodejs/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_generate_messages_cpp
+
+# Build rule for target.
+robot_teleop_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_generate_messages_cpp
+.PHONY : robot_teleop_generate_messages_cpp
+
+# fast build rule for target.
+robot_teleop_generate_messages_cpp/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_generate_messages_cpp.dir/build.make robot_teleop/CMakeFiles/robot_teleop_generate_messages_cpp.dir/build
+.PHONY : robot_teleop_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_generate_messages
+
+# Build rule for target.
+robot_teleop_generate_messages: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_generate_messages
+.PHONY : robot_teleop_generate_messages
+
+# fast build rule for target.
+robot_teleop_generate_messages/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_generate_messages.dir/build.make robot_teleop/CMakeFiles/robot_teleop_generate_messages.dir/build
+.PHONY : robot_teleop_generate_messages/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_geneus
+
+# Build rule for target.
+robot_teleop_geneus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_geneus
+.PHONY : robot_teleop_geneus
+
+# fast build rule for target.
+robot_teleop_geneus/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_geneus.dir/build.make robot_teleop/CMakeFiles/robot_teleop_geneus.dir/build
+.PHONY : robot_teleop_geneus/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_generate_messages_lisp
+
+# Build rule for target.
+robot_teleop_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_generate_messages_lisp
+.PHONY : robot_teleop_generate_messages_lisp
+
+# fast build rule for target.
+robot_teleop_generate_messages_lisp/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_generate_messages_lisp.dir/build.make robot_teleop/CMakeFiles/robot_teleop_generate_messages_lisp.dir/build
+.PHONY : robot_teleop_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_genlisp
+
+# Build rule for target.
+robot_teleop_genlisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_genlisp
+.PHONY : robot_teleop_genlisp
+
+# fast build rule for target.
+robot_teleop_genlisp/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_genlisp.dir/build.make robot_teleop/CMakeFiles/robot_teleop_genlisp.dir/build
+.PHONY : robot_teleop_genlisp/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_generate_messages_nodejs
+
+# Build rule for target.
+robot_teleop_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_generate_messages_nodejs
+.PHONY : robot_teleop_generate_messages_nodejs
+
+# fast build rule for target.
+robot_teleop_generate_messages_nodejs/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_generate_messages_nodejs.dir/build.make robot_teleop/CMakeFiles/robot_teleop_generate_messages_nodejs.dir/build
+.PHONY : robot_teleop_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named robot_teleop_generate_messages_py
+
+# Build rule for target.
+robot_teleop_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_teleop_generate_messages_py
+.PHONY : robot_teleop_generate_messages_py
+
+# fast build rule for target.
+robot_teleop_generate_messages_py/fast:
+	$(MAKE) -f robot_teleop/CMakeFiles/robot_teleop_generate_messages_py.dir/build.make robot_teleop/CMakeFiles/robot_teleop_generate_messages_py.dir/build
+.PHONY : robot_teleop_generate_messages_py/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -374,6 +673,29 @@ help:
 	@echo "... std_msgs_generate_messages_lisp"
 	@echo "... std_msgs_generate_messages_eus"
 	@echo "... std_msgs_generate_messages_cpp"
+	@echo "... robot_msgs_genpy"
+	@echo "... robot_msgs_generate_messages_cpp"
+	@echo "... _robot_msgs_generate_messages_check_deps_keyboard"
+	@echo "... robot_msgs_generate_messages_lisp"
+	@echo "... robot_msgs_gencpp"
+	@echo "... robot_msgs_generate_messages"
+	@echo "... robot_msgs_genlisp"
+	@echo "... robot_msgs_generate_messages_eus"
+	@echo "... robot_msgs_geneus"
+	@echo "... robot_msgs_generate_messages_nodejs"
+	@echo "... robot_msgs_generate_messages_py"
+	@echo "... robot_msgs_gennodejs"
+	@echo "... robot_teleop_genpy"
+	@echo "... robot_teleop_generate_messages_eus"
+	@echo "... robot_teleop_gencpp"
+	@echo "... robot_teleop_gennodejs"
+	@echo "... robot_teleop_generate_messages_cpp"
+	@echo "... robot_teleop_generate_messages"
+	@echo "... robot_teleop_geneus"
+	@echo "... robot_teleop_generate_messages_lisp"
+	@echo "... robot_teleop_genlisp"
+	@echo "... robot_teleop_generate_messages_nodejs"
+	@echo "... robot_teleop_generate_messages_py"
 .PHONY : help
 
 

@@ -6,4 +6,5 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs(gtest)
 subdirs(robot_control)
+subdirs(robot_msgs)
 subdirs(robot_teleop)

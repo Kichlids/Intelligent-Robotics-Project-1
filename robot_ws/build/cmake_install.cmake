@@ -127,6 +127,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build/gtest/cmake_install.cmake")
   include("/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build/robot_control/cmake_install.cmake")
+  include("/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build/robot_msgs/cmake_install.cmake")
   include("/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build/robot_teleop/cmake_install.cmake")
 
 endif()
