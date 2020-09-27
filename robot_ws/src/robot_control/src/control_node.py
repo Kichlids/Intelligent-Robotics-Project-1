@@ -5,7 +5,6 @@ import sys, select, termios, tty
 
 import random
 import math
-import time
 import numpy
 
 from robot_msgs.msg import keyboard
