@@ -15,29 +15,14 @@ from sensor_msgs.msg import LaserScan
 
 # Constants
 LINEAR_SPEED_DEFAULT = 0.2
-ANGULAR_SPEED_DEFAULT = 0.2
+ANGULAR_SPEED_DEFAULT = 0.3
 AUTONOMOUS_FORWARD_DISTANCE = 1
 
-# Use WASD to move
-input_keys = ['w', 'a', 's', 'd']
-
 # Global variables
-
 _vel_msg = Twist()
 _velocity_pub = None
 _collision_detected = False
 _is_teleop_controlled = False
-
-def get_key():
-    tty.setraw(sys.stdin.fileno())
-    rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-    if rlist:
-        key = sys.stdin.read(1)
-    else:
-        key = ''
-
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-    return key
 
 def meters_to_feet(val):
     return val / 3.28
@@ -49,35 +34,16 @@ def get_random_number(min, max):
 def rad_to_deg(rad):
     return rad * 180 / math.pi
 
-# Given keyboard input construct appropriate robot control msg
-def construct_teleop_msg():
+def find_min_value(array):
+    min_val = math.inf
+    min_index = -1
+    for i in len(array):
+        if min_val > array[i]:
+            min_val = array[i]
+            min_index = i
+    
+    return min_val, min_index
 
-    global _is_teleop_controlled
-
-    key = get_key()
-
-    if key in input_keys:
-        msg = Twist()
-
-        if key == 'w':
-            msg.linear.x = LINEAR_SPEED_DEFAULT
-        elif key == 'a':
-            msg.angular.z = ANGULAR_SPEED_DEFAULT
-        elif key == 's':
-            msg.linear.x = -LINEAR_SPEED_DEFAULT
-        elif key == 'd':
-            msg.angular.z = -ANGULAR_SPEED_DEFAULT
-        
-        msg.linear.y = 0
-        msg.linear.z = 0
-        msg.angular.x = 0
-        msg.angular.y = 0
-
-        #_is_teleop_controlled = True
-        return msg
-
-    #_is_teleop_controlled = False
-    return None
 
 def keyboard_callback(data):
     global _is_teleop_controlled
@@ -97,9 +63,6 @@ def keyboard_callback(data):
 
     _is_teleop_controlled = data.is_teleop
 
-
-
-
 # Callback function for collision detection
 def bumper_callback(data):
     global _collision_detected
@@ -110,15 +73,7 @@ def bumper_callback(data):
         _collision_detected = True
         _is_teleop_controlled = False
 
-def find_min_value(array):
-    min_val = math.inf
-    min_index = -1
-    for i in len(array):
-        if min_val > array[i]:
-            min_val = array[i]
-            min_index = i
-    
-    return min_val, min_index
+
 
 def laser_callback(data):
     min_val, min_index = find_min_value(data.ranges)
@@ -193,8 +148,6 @@ def init_control_node():
     laser_sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, laser_callback)
 
     while not rospy.is_shutdown():
-
-        #move_msg = construct_teleop_msg()
 
         if _collision_detected:
             print('COLLISION DETECTED: STOPPING...')

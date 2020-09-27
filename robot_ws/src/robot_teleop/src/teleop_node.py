@@ -2,7 +2,7 @@
 
 import rospy
 import sys, select, termios, tty
-from geometry_msgs.msg import Twist
+
 from robot_msgs.msg import keyboard
 
 input_keys = ['w', 'a', 's', 'd']
@@ -17,7 +17,6 @@ def get_key():
 
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
-
 
 def init_teleop_node():
     
@@ -38,7 +37,7 @@ def init_teleop_node():
             keyboard_msg.is_teleop = False
 
         keyboard_pub.publish(keyboard_msg)
-        
+
         rate.sleep()
         
 
