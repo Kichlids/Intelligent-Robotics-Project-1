@@ -6,6 +6,7 @@ import sys, select, termios, tty
 import random
 import math
 import time
+import numpy
 
 from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
@@ -14,6 +15,7 @@ from sensor_msgs.msg import LaserScan
 # Constants
 LINEAR_SPEED_DEFAULT = 0.2
 ANGULAR_SPEED_DEFAULT = 0.2
+AUTONOMOUS_FORWARD_DISTANCE = 1
 
 # Use WASD to move
 input_keys = ['w', 'a', 's', 'd']
@@ -37,6 +39,17 @@ def get_key():
 
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
+
+def meters_to_feet(val):
+    return val / 3.28
+
+def get_random_number(min, max):
+    rand = random.uniform(min, max)
+    return rand
+
+def rad_to_deg(rad):
+    return rad * 180 / math.pi
+
 
 # Given keyboard input construct appropriate robot control msg
 def construct_teleop_msg():
@@ -68,6 +81,7 @@ def construct_teleop_msg():
     _is_teleop_controlled = False
     return None
 
+# Callback function for collision detection
 def bumper_callback(data):
     global _collision_detected
     global _is_teleop_controlled
@@ -77,7 +91,30 @@ def bumper_callback(data):
         _collision_detected = True
         _is_teleop_controlled = False
 
-def move_autonomously(target_distance):
+def find_min_value(array):
+    min_val = math.inf
+    min_index = -1
+    for i in len(array):
+        if min_val > array[i]:
+            min_val = array[i]
+            min_index = i
+    
+    return min_val, min_index
+
+def laser_callback(data):
+    min_val, min_index = find_min_value(data.ranges)
+
+    '''
+    if (meters_to_feet(min_val) <= 1):
+        # Turn to the right
+        if min_index < len(data.ranges) / 2:
+            #
+        # Turn to the left
+        else:
+            #
+    '''
+
+def move_autonomously():
 
     global _velocity_pub
 
@@ -89,16 +126,14 @@ def move_autonomously(target_distance):
     t0 = rospy.Time.now().to_sec()
     current_distance = 0
 
-    while (current_distance < target_distance):
+    while (current_distance < AUTONOMOUS_FORWARD_DISTANCE):
         if _is_teleop_controlled:
             return
         
         _velocity_pub.publish(move_msg)
         t1 = rospy.Time.now().to_sec()
         current_distance = LINEAR_SPEED_DEFAULT * (t1 - t0)
-    
-    move_msg.linear.x = 0
-    _velocity_pub.publish(move_msg)
+    )
     print('forward done')
     #time.sleep(1)
     
@@ -126,20 +161,7 @@ def move_autonomously(target_distance):
         t1 = rospy.Time.now().to_sec()
         current_angle = rad_to_deg(ANGULAR_SPEED_DEFAULT) * (t1 - t0)
     
-    turn_msg.angular.z = 0
-    _velocity_pub.publish(turn_msg)
     print('turn done')
-
-
-def meters_to_feet(val):
-    return val / 3.28
-
-def get_random_number(min, max):
-    rand = random.uniform(min, max)
-    return rand
-
-def rad_to_deg(rad):
-    return rad * 180 / math.pi
 
 
 def init_control_node():
@@ -154,7 +176,7 @@ def init_control_node():
 
     _velocity_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size = 10)
     bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, bumper_callback)
-    #laser_sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, laser_callback)
+    laser_sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, laser_callback)
 
     while not rospy.is_shutdown():
 
@@ -165,9 +187,8 @@ def init_control_node():
             _velocity_pub.publish(no_movement_msg)
         elif _is_teleop_controlled:
             _velocity_pub.publish(move_msg)
-        
         else:
-            move_autonomously(meters_to_feet(1))
+            move_autonomously()
         
         rate.sleep()
 
