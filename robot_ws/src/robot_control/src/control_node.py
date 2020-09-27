@@ -142,9 +142,8 @@ def move_autonomously():
 
     t0 = rospy.Time.now().to_sec()
     current_angle = 0
-    rand = get_random_number(-15.0, 15.0)
-    target_angle = rand
-    print(rand)
+    target_angle = get_random_number(-15.0, 15.0)
+    print(target_angle)
 
     turn_msg = Twist()
     if rand >= 0:
