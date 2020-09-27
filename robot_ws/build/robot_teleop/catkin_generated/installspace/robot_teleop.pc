@@ -1,8 +1,0 @@
-prefix=/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/install
-
-Name: robot_teleop
-Description: Description of robot_teleop
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: rospy std_msgs message_runtime
