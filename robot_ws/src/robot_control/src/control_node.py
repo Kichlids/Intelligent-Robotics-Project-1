@@ -8,6 +8,7 @@ import math
 import time
 import numpy
 
+from robot_msgs.msg import keyboard
 from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
 from sensor_msgs.msg import LaserScan
@@ -22,13 +23,11 @@ input_keys = ['w', 'a', 's', 'd']
 
 # Global variables
 
+_vel_msg = Twist()
 _velocity_pub = None
 _collision_detected = False
 _is_teleop_controlled = False
 
-
-# Gets keyboard input from user
-# Stole this from Turtlebot
 def get_key():
     tty.setraw(sys.stdin.fileno())
     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
@@ -49,7 +48,6 @@ def get_random_number(min, max):
 
 def rad_to_deg(rad):
     return rad * 180 / math.pi
-
 
 # Given keyboard input construct appropriate robot control msg
 def construct_teleop_msg():
@@ -75,11 +73,32 @@ def construct_teleop_msg():
         msg.angular.x = 0
         msg.angular.y = 0
 
-        _is_teleop_controlled = True
+        #_is_teleop_controlled = True
         return msg
 
-    _is_teleop_controlled = False
+    #_is_teleop_controlled = False
     return None
+
+def keyboard_callback(data):
+    global _is_teleop_controlled
+    global _vel_msg
+
+    if data.is_teleop:
+        if data.command == 'w':
+            _vel_msg.linear.x = LINEAR_SPEED_DEFAULT
+        elif data.command == 'a':
+            _vel_msg.angular.z = ANGULAR_SPEED_DEFAULT
+        elif data.command == 's':
+            _vel_msg.linear.x = -LINEAR_SPEED_DEFAULT
+        else:
+            _vel_msg.angular.z = -ANGULAR_SPEED_DEFAULT
+    else:
+        _vel_msg = Twist()
+
+    _is_teleop_controlled = data.is_teleop
+
+
+
 
 # Callback function for collision detection
 def bumper_callback(data):
@@ -125,6 +144,7 @@ def move_autonomously():
     t0 = rospy.Time.now().to_sec()
     current_distance = 0
 
+    print('Moving forward 1ft')
     while (current_distance < AUTONOMOUS_FORWARD_DISTANCE):
         if _is_teleop_controlled:
             return
@@ -132,17 +152,16 @@ def move_autonomously():
         _velocity_pub.publish(move_msg)
         t1 = rospy.Time.now().to_sec()
         current_distance = LINEAR_SPEED_DEFAULT * (t1 - t0)
-    )
-    print('forward done')
 
     # Rotation movement
     t0 = rospy.Time.now().to_sec()
     current_angle = 0
     target_angle = get_random_number(-15.0, 15.0)
-    print(target_angle)
+    
+    print('Rotating ' + str(target_angle))
 
     turn_msg = Twist()
-    if rand >= 0:
+    if target_angle >= 0:
         turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
     else:
         turn_msg.angular.z = -ANGULAR_SPEED_DEFAULT
@@ -155,12 +174,11 @@ def move_autonomously():
         _velocity_pub.publish(turn_msg)
         t1 = rospy.Time.now().to_sec()
         current_angle = rad_to_deg(ANGULAR_SPEED_DEFAULT) * (t1 - t0)
-    
-    print('turn done')
 
 
 def init_control_node():
 
+    global _vel_msg
     global _velocity_pub
     global _collision_detected
     global _is_teleop_controlled
@@ -169,19 +187,22 @@ def init_control_node():
     rospy.init_node('control_node', anonymous = False)
     rate = rospy.Rate(10)
 
+    keyboard_sub = rospy.Subscriber('/robot/keyboard_input', keyboard, keyboard_callback)
     _velocity_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size = 10)
     bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, bumper_callback)
     laser_sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, laser_callback)
 
     while not rospy.is_shutdown():
 
-        move_msg = construct_teleop_msg()
+        #move_msg = construct_teleop_msg()
 
         if _collision_detected:
+            print('COLLISION DETECTED: STOPPING...')
             no_movement_msg = Twist()
             _velocity_pub.publish(no_movement_msg)
         elif _is_teleop_controlled:
-            _velocity_pub.publish(move_msg)
+            print('Teleop control detected')
+            _velocity_pub.publish(_vel_msg)
         else:
             move_autonomously()
         
