@@ -1,20 +1,23 @@
 #! /usr/bin/env python
 
 import rospy
-
-from geometry_msgs.msg import Twist
-
 import sys, select, termios, tty
+from geometry_msgs.msg import Twist
+from kobuki_msgs.msg import BumperEvent
 
-
+# Constants
 LINEAR_SPEED_DEFAULT = 1
 ANGULAR_SPEED_DEFAULT = 1
 
 # Use WASD to move
 input_keys = ['w', 'a', 's', 'd']
 
+# Global variables
+_can_teleop_control = True
 
-# stole this from turtlebot
+
+# Gets keyboard input from user
+# Stole this from Turtlebot
 def get_key():
     tty.setraw(sys.stdin.fileno())
     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
@@ -27,6 +30,7 @@ def get_key():
     return key
 
 
+# Given keyboard input construct appropriate robot control msg
 def construct_teleop_msg():
 
     key = get_key()
@@ -51,20 +55,30 @@ def construct_teleop_msg():
 
     return None
 
+
+def bumper_callback(data):
+    global _can_teleop_control
+
+    if data.state == BumperEvent.PRESSED:
+        _can_teleop_control = False
+
 def init_teleop_node():
     
-    global _teleop_pub
+    global _can_teleop_control
 
     rospy.init_node('teleop_node', anonymous = False)
+
     rate = rospy.Rate(10)
-    _teleop_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size = 10)
+    teleop_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size = 10)
+    bumper_sub = rospy.Subscriber('mobile_base/events/bumper', BumperEvent, bumper_callback)
 
     while not rospy.is_shutdown():
-        msg = construct_teleop_msg()
-        
-        if msg != None:    
-            _teleop_pub.publish(msg)
-            print(msg)
+        if _can_teleop_control:
+            msg = construct_teleop_msg()
+            
+            if msg != None:    
+                teleop_pub.publish(msg)
+                print(msg)
 
         rate.sleep()
         

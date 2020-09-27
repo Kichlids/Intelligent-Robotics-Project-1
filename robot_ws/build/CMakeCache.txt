@@ -315,6 +315,12 @@ lib:FILEPATH=/opt/ros/kinetic/lib/librostime.so
 message_runtime_DIR:PATH=/opt/ros/kinetic/share/message_runtime/cmake
 
 //Value Computed by CMake
+robot_control_BINARY_DIR:STATIC=/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build/robot_control
+
+//Value Computed by CMake
+robot_control_SOURCE_DIR:STATIC=/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/src/robot_control
+
+//Value Computed by CMake
 robot_teleop_BINARY_DIR:STATIC=/home/kichlids/Project1/Intelligent-Robotics-Project-1/robot_ws/build/robot_teleop
 
 //Value Computed by CMake
@@ -437,7 +443,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=4
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
