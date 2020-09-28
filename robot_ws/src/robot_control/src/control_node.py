@@ -1,14 +1,11 @@
 #! /usr/bin/env python
 
 import rospy
-import sys, select, termios, tty
-
 import random
 import math
 import numpy
 
 from robot_msgs.msg import keyboard
-
 from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
 from sensor_msgs.msg import LaserScan
@@ -17,76 +14,43 @@ from sensor_msgs.msg import LaserScan
 LINEAR_SPEED_DEFAULT = 0.2
 ANGULAR_SPEED_DEFAULT = 0.3
 AUTONOMOUS_FORWARD_DISTANCE = 1
+LASER_AVOIDANCE_DISTANCE = 1
+LASER_CENTER_INDEX_THRESHOLD = 40
+LASER_SYMMETRIC_VALUE_THRESHOLD = 0.2
+
 
 # Global variables
-_vel_msg = Twist()
 _velocity_pub = None
+
+_vel_msg = Twist()
+
 _collision_detected = False
 _is_teleop_controlled = False
+
+_symmetric_obstacle_detected = False
+_asymmetric_obstacle_detected = False
+_laser_data = None
 
 def meters_to_feet(val):
     return val / 3.28
 
-def get_random_number(min, max):
-    rand = random.uniform(min, max)
-    return rand
-
 def rad_to_deg(rad):
     return rad * 180 / math.pi
 
-def find_min_value(array):
+def get_random_number(min, max):
+    return random.uniform(min, max)
+
+def find_min_laser_data(data, range_min, range_max):
     min_val = math.inf
     min_index = -1
     for i in len(array):
-        if min_val > array[i]:
-            min_val = array[i]
-            min_index = i
+        if min_val > range_min and min_val < range_max:
+            if min_val > array[i]:
+                min_val = array[i]
+                min_index = i
     
     return min_val, min_index
 
-
-def keyboard_callback(data):
-    global _is_teleop_controlled
-    global _vel_msg
-
-    if data.is_teleop:
-        if data.command == 'w':
-            _vel_msg.linear.x = LINEAR_SPEED_DEFAULT
-        elif data.command == 'a':
-            _vel_msg.angular.z = ANGULAR_SPEED_DEFAULT
-        elif data.command == 's':
-            _vel_msg.linear.x = -LINEAR_SPEED_DEFAULT
-        else:
-            _vel_msg.angular.z = -ANGULAR_SPEED_DEFAULT
-    else:
-        _vel_msg = Twist()
-
-    _is_teleop_controlled = data.is_teleop
-
-# Callback function for collision detection
-def bumper_callback(data):
-    global _collision_detected
-    global _is_teleop_controlled
-
-    if data.state == BumperEvent.PRESSED:
-        print('COLLISION DETECTED\n')
-        _collision_detected = True
-        _is_teleop_controlled = False
-
-
-
-def laser_callback(data):
-    min_val, min_index = find_min_value(data.ranges)
-
-    '''
-    if (meters_to_feet(min_val) <= 1):
-        # Turn to the right
-        if min_index < len(data.ranges) / 2:
-            #
-        # Turn to the left
-        else:
-            #
-    '''
 
 def move_autonomously():
 
@@ -130,6 +94,75 @@ def move_autonomously():
         t1 = rospy.Time.now().to_sec()
         current_angle = rad_to_deg(ANGULAR_SPEED_DEFAULT) * (t1 - t0)
 
+def keyboard_callback(data):
+    global _is_teleop_controlled
+    global _vel_msg
+
+    if data.is_teleop:
+        if data.command == 'w':
+            _vel_msg.linear.x = LINEAR_SPEED_DEFAULT
+        elif data.command == 'a':
+            _vel_msg.angular.z = ANGULAR_SPEED_DEFAULT
+        elif data.command == 's':
+            _vel_msg.linear.x = -LINEAR_SPEED_DEFAULT
+        else:
+            _vel_msg.angular.z = -ANGULAR_SPEED_DEFAULT
+    else:
+        _vel_msg = Twist()
+
+    _is_teleop_controlled = data.is_teleop
+
+# Callback function for collision detection
+def bumper_callback(data):
+    global _collision_detected
+    global _is_teleop_controlled
+
+    if data.state == BumperEvent.PRESSED:
+        print('COLLISION DETECTED\n')
+        _collision_detected = True
+        _is_teleop_controlled = False
+
+# The length of list: ranges is 720. Index 0 represent 0 deg, 360 = 90, 720 = 180
+def laser_callback(data):
+    global _symmetric_obstacle_detected
+    global _asymmetric_obstacle_detected
+    global _laser_data
+
+    ranges = meters_to_feet(data.ranges)
+    range_min = meters_to_feet(data.range_min)
+    range_max = meters_to_feet(data.range_max)
+
+    min_val, min_index = find_min_laser_data(ranges, range_min, range_max)
+    
+    if min_val < LASER_AVOIDANCE_DISTANCE:
+
+        i = len(data.ranges) - 1 - min_index
+        val_i = meters_to_feet(data.ranges[i])
+
+        if abs(min_val - val_i) < LASER_SYMMETRIC_VALUE_THRESHOLD:
+            # SYMMETTRIC
+            _symmetric_obstacle_detected = True
+            _asymmetric_obstacle_detected = False
+        else:
+            # ASSYMETRIC
+            _symmetric_obstacle_detected = False
+            _asymmetric_obstacle_detected = True
+        
+        _laser_data = data
+
+    else:
+        _symmetric_obstacle_detected = False
+        _asymmetric_obstacle_detected = False
+
+    '''
+    if (meters_to_feet(min_val) <= 1):
+        # Turn to the right
+        if min_index < len(data.ranges) / 2:
+            #
+        # Turn to the left
+        else:
+            #
+    '''
 
 def init_control_node():
 
@@ -137,6 +170,8 @@ def init_control_node():
     global _velocity_pub
     global _collision_detected
     global _is_teleop_controlled
+    global _symmetric_obstacle_detected
+    global _asymmetric_obstacle_detected
     
 
     rospy.init_node('control_node', anonymous = False)
@@ -153,9 +188,14 @@ def init_control_node():
             print('COLLISION DETECTED: STOPPING...')
             no_movement_msg = Twist()
             _velocity_pub.publish(no_movement_msg)
+            #return
         elif _is_teleop_controlled:
             print('Teleop control detected')
             _velocity_pub.publish(_vel_msg)
+        elif _symmetric_obstacle_detected:
+            print('Encountered symmetric obstacle')
+        elif _asymmetric_obstacle_detected:
+            print('Encountered asymmetric obstacle')
         else:
             move_autonomously()
         
@@ -163,11 +203,7 @@ def init_control_node():
 
 
 if __name__ == '__main__':
-    settings = termios.tcgetattr(sys.stdin)
-
     try:
         init_control_node()
     except rospy.ROSInterruptException:
         pass
-
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
