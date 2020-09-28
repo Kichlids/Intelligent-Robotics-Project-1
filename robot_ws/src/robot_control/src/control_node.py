@@ -31,15 +31,20 @@ _symmetric_obstacle_detected = False
 _asymmetric_obstacle_detected = False
 _laser_data = None
 
+# Convert meters into feet
 def meters_to_feet(val):
     return val / 3.28
 
+# Convert radians to degrees
 def rad_to_deg(rad):
     return rad * 180 / math.pi
 
+# Return a random number between min and max
 def get_random_number(min, max):
     return random.uniform(min, max)
 
+# Return minimum distance detected by laser that is bounded
+# by range_min and range_max
 def find_min_laser_data(data, range_min, range_max):
     min_val = math.inf
     min_index = -1
@@ -50,6 +55,40 @@ def find_min_laser_data(data, range_min, range_max):
                 min_index = i
     
     return min_val, min_index
+
+def escape():
+    global _velocity_pub
+    global _is_teleop_controlled
+
+    print('Symmetric obstacle detected')
+
+    # Rotate 180 degrees
+    t0 = rospy.Time.now().to_sec()
+    current_angle = 0
+    target_angle = 180
+    
+    #print('Rotating ' + str(target_angle))
+
+    turn_msg = Twist()
+    turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
+
+    while (current_angle < abs(target_angle)):
+        if _is_teleop_controlled:
+            return
+        
+        _velocity_pub.publish(turn_msg)
+        t1 = rospy.Time.now().to_sec()
+        current_angle = rad_to_deg(ANGULAR_SPEED_DEFAULT) * (t1 - t0)
+
+def avoid():
+    global _velocity_pub
+    global _is_teleop_controlled
+    global _symmetric_obstacle_detected
+    global _laser_data
+
+    print('Asymmetric obstacle detected')
+
+
 
 
 def move_autonomously():
@@ -65,7 +104,7 @@ def move_autonomously():
 
     print('Moving forward 1ft')
     while (current_distance < AUTONOMOUS_FORWARD_DISTANCE):
-        if _is_teleop_controlled:
+        if _is_teleop_controlled or _asymmetric_obstacle_detected or _symmetric_obstacle_detected:
             return
         
         _velocity_pub.publish(move_msg)
@@ -87,13 +126,17 @@ def move_autonomously():
 
 
     while (current_angle < abs(target_angle)):
-        if (_is_teleop_controlled):
+        if _is_teleop_controlled or _asymmetric_obstacle_detected or _symmetric_obstacle_detected:
             return
         
         _velocity_pub.publish(turn_msg)
         t1 = rospy.Time.now().to_sec()
         current_angle = rad_to_deg(ANGULAR_SPEED_DEFAULT) * (t1 - t0)
 
+# Callback function in response to keyboard inputs
+# Detects:
+# - if user is controlling the robot
+# - the command
 def keyboard_callback(data):
     global _is_teleop_controlled
     global _vel_msg
@@ -112,7 +155,9 @@ def keyboard_callback(data):
 
     _is_teleop_controlled = data.is_teleop
 
-# Callback function for collision detection
+# Callback function in response to collision
+# Detects:
+# - Any bumper has been triggered
 def bumper_callback(data):
     global _collision_detected
     global _is_teleop_controlled
@@ -122,6 +167,10 @@ def bumper_callback(data):
         _collision_detected = True
         _is_teleop_controlled = False
 
+# Callback function in response to laser sensor
+# Detects:
+# - 720 samples of distance from robot to obstacles ranging from 0-180 degrees
+#
 # The length of list: ranges is 720. Index 0 represent 0 deg, 360 = 90, 720 = 180
 def laser_callback(data):
     global _symmetric_obstacle_detected
@@ -154,16 +203,6 @@ def laser_callback(data):
         _symmetric_obstacle_detected = False
         _asymmetric_obstacle_detected = False
 
-    '''
-    if (meters_to_feet(min_val) <= 1):
-        # Turn to the right
-        if min_index < len(data.ranges) / 2:
-            #
-        # Turn to the left
-        else:
-            #
-    '''
-
 def init_control_node():
 
     global _vel_msg
@@ -189,13 +228,19 @@ def init_control_node():
             no_movement_msg = Twist()
             _velocity_pub.publish(no_movement_msg)
             #return
+
         elif _is_teleop_controlled:
             print('Teleop control detected')
             _velocity_pub.publish(_vel_msg)
+
         elif _symmetric_obstacle_detected:
             print('Encountered symmetric obstacle')
+            escape()
+
         elif _asymmetric_obstacle_detected:
             print('Encountered asymmetric obstacle')
+
+
         else:
             move_autonomously()
         
