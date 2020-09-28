@@ -1,7 +1,10 @@
 #! /usr/bin/env python
 
 import rospy
-import sys, select, termios, tty
+import sys
+import select
+import termios
+import tty
 
 from robot_msgs.msg import keyboard
 
