@@ -30,6 +30,7 @@ _is_teleop_controlled = False
 _symmetric_obstacle_detected = False
 _asymmetric_obstacle_detected = False
 _laser_data = None
+_laser_min_index = -1
 
 # Convert meters into feet
 def meters_to_feet(val):
@@ -45,10 +46,10 @@ def get_random_number(min, max):
 
 # Return minimum distance detected by laser that is bounded
 # by range_min and range_max
-def find_min_laser_data(data, range_min, range_max):
-    min_val = math.inf
-    min_index = -1
-    for i in len(array):
+def find_min_laser_data(array, range_min, range_max):
+    min_val = array[0]
+    min_index = 0
+    for i in range(len(array)):
         if min_val > range_min and min_val < range_max:
             if min_val > array[i]:
                 min_val = array[i]
@@ -60,14 +61,10 @@ def escape():
     global _velocity_pub
     global _is_teleop_controlled
 
-    print('Symmetric obstacle detected')
-
     # Rotate 180 degrees
     t0 = rospy.Time.now().to_sec()
     current_angle = 0
     target_angle = 180
-    
-    #print('Rotating ' + str(target_angle))
 
     turn_msg = Twist()
     turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
@@ -84,12 +81,23 @@ def avoid():
     global _velocity_pub
     global _is_teleop_controlled
     global _symmetric_obstacle_detected
+    global _asymmetric_obstacle_detected
     global _laser_data
+    global _laser_min_index
 
-    print('Asymmetric obstacle detected')
+    turn_msg = Twist()
+    # Obstacle found left side. Turn right
+    if _laser_min_index < (len(_laser_data.ranges) - 1) / 2 :
+        turn_msg.angular.z = -ANGULAR_SPEED_DEFAULT
+    # Obstacle found right side. Turn left
+    else:
+        turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
 
-
-
+    while (_asymmetric_obstacle_detected):
+        if _is_teleop_controlled or _symmetric_obstacle_detected:
+            return
+        
+        _velocity_pub.publish(turn_msg)
 
 def move_autonomously():
 
@@ -163,7 +171,6 @@ def bumper_callback(data):
     global _is_teleop_controlled
 
     if data.state == BumperEvent.PRESSED:
-        print('COLLISION DETECTED\n')
         _collision_detected = True
         _is_teleop_controlled = False
 
@@ -173,20 +180,30 @@ def bumper_callback(data):
 #
 # The length of list: ranges is 720. Index 0 represent 0 deg, 360 = 90, 720 = 180
 def laser_callback(data):
+    #print(data.ranges)
+    
     global _symmetric_obstacle_detected
     global _asymmetric_obstacle_detected
     global _laser_data
+    global _laser_min_index
 
-    ranges = meters_to_feet(data.ranges)
-    range_min = meters_to_feet(data.range_min)
-    range_max = meters_to_feet(data.range_max)
+    '''
+    ranges = []
+    for i in range(len(data.ranges)):
+        ranges.append(meters_to_feet(data.ranges[i]))
+    '''
+    ranges = data.ranges
+    range_min = data.range_min#meters_to_feet(data.range_min)
+    range_max = data.range_max#meters_to_feet(data.range_max)
 
     min_val, min_index = find_min_laser_data(ranges, range_min, range_max)
-    
+    print(min_val)
     if min_val < LASER_AVOIDANCE_DISTANCE:
+        
 
         i = len(data.ranges) - 1 - min_index
-        val_i = meters_to_feet(data.ranges[i])
+        #val_i = '''meters_to_feet'''data.ranges[i]
+        val_i = data.ranges[i]
 
         if abs(min_val - val_i) < LASER_SYMMETRIC_VALUE_THRESHOLD:
             # SYMMETTRIC
@@ -198,10 +215,13 @@ def laser_callback(data):
             _asymmetric_obstacle_detected = True
         
         _laser_data = data
+        _laser_min_index = min_index
 
     else:
         _symmetric_obstacle_detected = False
         _asymmetric_obstacle_detected = False
+    
+
 
 def init_control_node():
 
@@ -211,7 +231,6 @@ def init_control_node():
     global _is_teleop_controlled
     global _symmetric_obstacle_detected
     global _asymmetric_obstacle_detected
-    
 
     rospy.init_node('control_node', anonymous = False)
     rate = rospy.Rate(10)
@@ -219,7 +238,7 @@ def init_control_node():
     keyboard_sub = rospy.Subscriber('/robot/keyboard_input', keyboard, keyboard_callback)
     _velocity_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size = 10)
     bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, bumper_callback)
-    laser_sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, laser_callback)
+    laser_sub = rospy.Subscriber('/scan', LaserScan, laser_callback)
 
     while not rospy.is_shutdown():
 
@@ -228,23 +247,21 @@ def init_control_node():
             no_movement_msg = Twist()
             _velocity_pub.publish(no_movement_msg)
             #return
-
         elif _is_teleop_controlled:
-            print('Teleop control detected')
+            #print('Teleop control detected')
             _velocity_pub.publish(_vel_msg)
-
         elif _symmetric_obstacle_detected:
             print('Encountered symmetric obstacle')
             escape()
-
         elif _asymmetric_obstacle_detected:
             print('Encountered asymmetric obstacle')
-
-
+            avoid()
         else:
             move_autonomously()
         
         rate.sleep()
+
+        
 
 
 if __name__ == '__main__':
