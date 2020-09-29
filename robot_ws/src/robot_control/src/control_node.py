@@ -11,12 +11,13 @@ from kobuki_msgs.msg import BumperEvent
 from sensor_msgs.msg import LaserScan
 
 # Constants
-LINEAR_SPEED_DEFAULT = 0.2
-ANGULAR_SPEED_DEFAULT = 0.3
+LINEAR_SPEED_DEFAULT = 0.5
+ANGULAR_SPEED_DEFAULT = 0.4
 AUTONOMOUS_FORWARD_DISTANCE = 1
-LASER_AVOIDANCE_DISTANCE = 1
-LASER_CENTER_INDEX_THRESHOLD = 40
-LASER_SYMMETRIC_VALUE_THRESHOLD = 0.2
+# 0.449999988079 meters is the minimum dist detected, which is about 1.5 feet
+LASER_AVOIDANCE_DISTANCE = 1.5
+#LASER_CENTER_INDEX_THRESHOLD = 40
+LASER_SYMMETRIC_VALUE_THRESHOLD = 0.3
 
 
 # Global variables
@@ -34,6 +35,9 @@ _laser_min_index = -1
 
 # Convert meters into feet
 def meters_to_feet(val):
+    return val * 3.28
+
+def feet_to_meters(val):
     return val / 3.28
 
 # Convert radians to degrees
@@ -50,10 +54,10 @@ def find_min_laser_data(array, range_min, range_max):
     min_val = array[0]
     min_index = 0
     for i in range(len(array)):
-        if min_val > range_min and min_val < range_max:
-            if min_val > array[i]:
-                min_val = array[i]
-                min_index = i
+        #if min_val > range_min and min_val < range_max:
+        if min_val > array[i]:
+            min_val = array[i]
+            min_index = i
     
     return min_val, min_index
 
@@ -88,10 +92,10 @@ def avoid():
     turn_msg = Twist()
     # Obstacle found left side. Turn right
     if _laser_min_index < (len(_laser_data.ranges) - 1) / 2 :
-        turn_msg.angular.z = -ANGULAR_SPEED_DEFAULT
+        turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
     # Obstacle found right side. Turn left
     else:
-        turn_msg.angular.z = ANGULAR_SPEED_DEFAULT
+        turn_msg.angular.z = -ANGULAR_SPEED_DEFAULT
 
     while (_asymmetric_obstacle_detected):
         if _is_teleop_controlled or _symmetric_obstacle_detected:
@@ -105,7 +109,7 @@ def move_autonomously():
 
     # Forward movement
     move_msg = Twist()
-    move_msg.linear.x = LINEAR_SPEED_DEFAULT
+    move_msg.linear.x = feet_to_meters(LINEAR_SPEED_DEFAULT)
 
     t0 = rospy.Time.now().to_sec()
     current_distance = 0
@@ -124,7 +128,7 @@ def move_autonomously():
     current_angle = 0
     target_angle = get_random_number(-15.0, 15.0)
     
-    print('Rotating ' + str(target_angle))
+    print('Rotating ' + str(round(target_angle, 2)))
 
     turn_msg = Twist()
     if target_angle >= 0:
@@ -151,13 +155,13 @@ def keyboard_callback(data):
 
     if data.is_teleop:
         if data.command == 'w':
-            _vel_msg.linear.x = LINEAR_SPEED_DEFAULT
+            _vel_msg.linear.x = feet_to_meters(LINEAR_SPEED_DEFAULT)
         elif data.command == 'a':
-            _vel_msg.angular.z = ANGULAR_SPEED_DEFAULT
+            _vel_msg.angular.z = feet_to_meters(ANGULAR_SPEED_DEFAULT)
         elif data.command == 's':
-            _vel_msg.linear.x = -LINEAR_SPEED_DEFAULT
+            _vel_msg.linear.x = feet_to_meters(-LINEAR_SPEED_DEFAULT)
         else:
-            _vel_msg.angular.z = -ANGULAR_SPEED_DEFAULT
+            _vel_msg.angular.z = feet_to_meters(-ANGULAR_SPEED_DEFAULT)
     else:
         _vel_msg = Twist()
 
@@ -186,26 +190,35 @@ def laser_callback(data):
     global _asymmetric_obstacle_detected
     global _laser_data
     global _laser_min_index
-
     '''
+    print(len(data.ranges))
+    print(data.angle_increment)
+    print(data.range_min)
+    print(data.range_max)
+    print(data.angle_min)
+    print(data.angle_max)
+    '''
+    #print(meters_to_feet(data.ranges[len(data.ranges)/2]))
+
+    
     ranges = []
     for i in range(len(data.ranges)):
         ranges.append(meters_to_feet(data.ranges[i]))
-    '''
-    ranges = data.ranges
-    range_min = data.range_min#meters_to_feet(data.range_min)
-    range_max = data.range_max#meters_to_feet(data.range_max)
+    
+    range_min = meters_to_feet(data.range_min)
+    range_max = meters_to_feet(data.range_max)
 
     min_val, min_index = find_min_laser_data(ranges, range_min, range_max)
-    print(min_val)
-    if min_val < LASER_AVOIDANCE_DISTANCE:
+   
+    if math.isnan(min_val) or min_val < LASER_AVOIDANCE_DISTANCE:
         
 
         i = len(data.ranges) - 1 - min_index
-        #val_i = '''meters_to_feet'''data.ranges[i]
-        val_i = data.ranges[i]
+        val_i = meters_to_feet(data.ranges[i])
+        #print(str(min_val) + ', ' + str(val_i))
+        #print(str(min_val) + ", " + str(0.09375 * min_index - 30) + ", " + str(val_i))
 
-        if abs(min_val - val_i) < LASER_SYMMETRIC_VALUE_THRESHOLD:
+        if math.isnan(val_i) or abs(min_val - val_i) < LASER_SYMMETRIC_VALUE_THRESHOLD:
             # SYMMETTRIC
             _symmetric_obstacle_detected = True
             _asymmetric_obstacle_detected = False
@@ -250,6 +263,7 @@ def init_control_node():
         elif _is_teleop_controlled:
             #print('Teleop control detected')
             _velocity_pub.publish(_vel_msg)
+        
         elif _symmetric_obstacle_detected:
             print('Encountered symmetric obstacle')
             escape()
@@ -258,6 +272,7 @@ def init_control_node():
             avoid()
         else:
             move_autonomously()
+        
         
         rate.sleep()
 
