@@ -36,4 +36,8 @@
         <remap from="scan" to="/scan"/>
     </node>
 
+    <node pkg="robot_control" name="control_node" type="control_node.py" output="screen"/> 
+
+    <node pkg="robot_control" name="teleop_node" type="teleop_node.py" output="screen"/> 
+
 </launch>
