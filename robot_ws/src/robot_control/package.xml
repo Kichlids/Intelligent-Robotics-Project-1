@@ -2,7 +2,10 @@
 <package format="2">
   <name>robot_control</name>
   <version>0.0.0</version>
-  <description>The robot_control package</description>
+  <description>
+    The robot_control package. This package controls the decision making process of the robot
+    and the movement of the robot as a consequence.
+  </description>
 
   <maintainer email="ksong@ou.edu">Kichang Song</maintainer>
 
@@ -22,6 +25,5 @@
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-
   </export>
 </package>
