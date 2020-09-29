@@ -42,20 +42,20 @@ class KeyboardInput:
 
         self.keyboard_pub.publish(keyboard_msg)
 
-    
+
+def init_teleop_node():
+    rospy.init_node('teleop_node', anonymous = False)
+    rate = rospy.Rate(10)
+
+    while not rospy.is_shutdown():
+        keyboard_input = KeyboardInput()
 
 if __name__ == '__main__':
     settings = termios.tcgetattr(sys.stdin)
 
     try:
-        rospy.init_node('teleop_node', anonymous = False)
-        rate = rospy.Rate(10)
-
-        while not rospy.is_shutdown():
-            keyboard_input = KeyboardInput()
-
+        init_teleop_node()
     except rospy.ROSInterruptException:
         pass
-
 
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
