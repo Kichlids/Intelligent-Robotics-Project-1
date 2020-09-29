@@ -10,6 +10,16 @@ from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
 from sensor_msgs.msg import LaserScan
 
+
+
+
+
+
+
+
+
+
+
 # Constants
 LINEAR_SPEED_DEFAULT = 0.5
 ANGULAR_SPEED_DEFAULT = 0.4
@@ -234,8 +244,6 @@ def laser_callback(data):
         _symmetric_obstacle_detected = False
         _asymmetric_obstacle_detected = False
     
-
-
 def init_control_node():
 
     global _vel_msg
@@ -276,11 +284,24 @@ def init_control_node():
         
         rate.sleep()
 
-        
-
-
 if __name__ == '__main__':
     try:
         init_control_node()
     except rospy.ROSInterruptException:
         pass
+
+'''
+
+if __name__ == '__main__':
+    try:
+        rospy.init_node('control_node', anonymous = False)
+    rate = rospy.Rate(10)
+
+    keyboard_sub = rospy.Subscriber('/robot/keyboard_input', keyboard, keyboard_callback)
+    _velocity_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size = 10)
+    bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, bumper_callback)
+    laser_sub = rospy.Subscriber('/scan', LaserScan, laser_callback)
+
+    except rospy.ROSInterruptException:
+        pass
+'''
