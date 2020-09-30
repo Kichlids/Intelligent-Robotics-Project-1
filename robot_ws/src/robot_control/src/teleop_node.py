@@ -8,17 +8,15 @@ import tty
 
 from robot_msgs.msg import keyboard
 
-
+# Class receives user input and publishes movement messages
 class KeyboardInput:
 
     def __init__(self):
-
         self.input_keys = ['w', 'a', 's', 'd']
-
         self.keyboard_pub = rospy.Publisher('/robot/keyboard_input', keyboard, queue_size = 10)
-        
         self.construct_keyboard_msg()
 
+    # This was taken from turtlebot teleop code
     def get_key(self):
         tty.setraw(sys.stdin.fileno())
         rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
@@ -30,6 +28,7 @@ class KeyboardInput:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
         return key
 
+    # Determine key pressed and publish key information accordingly
     def construct_keyboard_msg(self):
         key = self.get_key()
         keyboard_msg = keyboard()
@@ -42,7 +41,7 @@ class KeyboardInput:
 
         self.keyboard_pub.publish(keyboard_msg)
 
-
+# Initialize teleop node and keyboard publisher
 def init_teleop_node():
     rospy.init_node('teleop_node', anonymous = False)
     rate = rospy.Rate(10)
