@@ -38,4 +38,6 @@
 
     <node pkg="robot_control" name="teleop_node" type="teleop_node.py" output="screen"/> 
 
+    <include file="$(find turtlebot_gazebo)/launch/gmapping_demo.launch"/>
+    
 </launch>
