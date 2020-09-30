@@ -22,6 +22,7 @@ Or unpack the zipped project submitted into a suitable location
 
 ## #5 Execute the main launch file
 `roslaunch robot_control robot_control.launch`   
+   
 Use the WASD keys to control the robot in the same terminal that you just ran the previous command.
 
 ## #6 Execute these commands to view the robot mapping the room
