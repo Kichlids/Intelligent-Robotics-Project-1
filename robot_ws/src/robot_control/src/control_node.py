@@ -11,11 +11,17 @@ from kobuki_msgs.msg import BumperEvent
 from sensor_msgs.msg import LaserScan
 
 
-# Constant variables
+###### Constant variables ############
+
+# Speed ft/s
 LINEAR_SPEED_DEFAULT = 0.5
+# Rotation speed ft/s
 ANGULAR_SPEED_DEFAULT = 0.4
+# Distance in ft to move forward in auto-move
 AUTONOMOUS_FORWARD_DISTANCE = 1
+# Obstacle avoidance threshold in ft, including the position of the laser scan sensor
 LASER_AVOIDANCE_DISTANCE = 1.5
+# Symmetric determining threshold in m
 LASER_SYMMETRIC_VALUE_THRESHOLD = 0.3
 
 
