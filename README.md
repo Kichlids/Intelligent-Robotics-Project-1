@@ -8,6 +8,7 @@ Ethan Vong
 
 ## #1 Clone the Github repository in a suitable location with
 `git clone https://github.com/Kichlids/Intelligent-Robotics-Project-1.git`   
+   
 Or unpack the zipped project submitted into a suitable location
 
 ## #2 CD into the project workspace
