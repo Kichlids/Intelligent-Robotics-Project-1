@@ -15,7 +15,6 @@ from sensor_msgs.msg import LaserScan
 LINEAR_SPEED_DEFAULT = 0.5
 ANGULAR_SPEED_DEFAULT = 0.4
 AUTONOMOUS_FORWARD_DISTANCE = 1
-# 0.449999988079 meters is the minimum dist detected, which is about 1.5 feet
 LASER_AVOIDANCE_DISTANCE = 1.5
 LASER_SYMMETRIC_VALUE_THRESHOLD = 0.3
 
@@ -94,6 +93,8 @@ class Laser():
     
     # Laser Scanner callback function
     def laser_callback(self, data):
+
+        #print(self.support.meters_to_feet(data.ranges[320]))
 
         # Convert ranges from meters to feet
         ranges = []
