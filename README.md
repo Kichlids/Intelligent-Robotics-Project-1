@@ -21,9 +21,9 @@ Or unpack the zipped project submitted into a suitable location
 Use the WASD keys to control the robot in the same terminal that you just ran the previous command.
 
 ## #6 Execute these commands to view the robot mapping the room
-In a separate terminal launch rviz
-`roslaunch turtlebot_rviz_launchers view_navigation.launch`
-After mapping you can save the map
-`rosrun map_server map_saver -f <your map name>`
-Execute this command to run autonomous pathing with your map (Don’t close the other terminals or programs)
+In a separate terminal launch rviz   
+`roslaunch turtlebot_rviz_launchers view_navigation.launch`   
+After mapping you can save the map   
+`rosrun map_server map_saver -f <your map name>`   
+Execute this command to run autonomous pathing with your map (Don’t close the other terminals or programs)   
 `roslaunch turtlebot_gazebo amcl_demo.launch map_file:=<full path to your map YAML file>`
